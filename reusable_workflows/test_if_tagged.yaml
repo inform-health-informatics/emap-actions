@@ -3,10 +3,9 @@ name: Test if tag exists
 on:
   workflow_call:
   inputs:
-    repo:     # Name of the repository to run on
+    repo:     # Name of the repository to run on e.g. 'Inform-DB'
       required: true
       type: string
-      default: 'Inform-DB'
     tag_name: # Name of the tag to search for
       required: false
       type: string

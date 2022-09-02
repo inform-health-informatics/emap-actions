@@ -4,7 +4,8 @@ Reusable GitHub actions for EMAP projects
 
 ## Examples
 
-To tag a list of repositories
+To tag a list of repositories. Useful if an action in one repository requires 
+delayed actions to happen in other repositories. 
 ```yaml
 jobs:
   example-job:
@@ -19,7 +20,10 @@ jobs:
 
 ***
 
-To test a repository if a tag exists
+Run tests if a tag exists on a repository. If it does run a workflow (`test.yaml`) in
+the current repository and remove the tag. This can be combined with the `tag_repos` 
+workflow to allow delayed testing of a set of repos when there is e.g. a push on one 
+of them.
 ```yaml
 jobs:
   example-job:
