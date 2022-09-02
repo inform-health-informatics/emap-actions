@@ -14,7 +14,7 @@ jobs:
       branch: "develop"     # Optional
       tag_name: "test_me"   # Optional
     secrets:
-      token: ${{ your-github-token }}  # Required
+      token: ${{ github-access-token }}  # Required
 ```
 
 ***

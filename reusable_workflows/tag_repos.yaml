@@ -3,7 +3,7 @@ name: Set flag for delayed testing
 on:
   workflow_call:
   inputs:
-    repos:     # Name of the repositories to run on
+    repos:     # Whitespace separated names of the repositories to run on
       required: true
       type: string
     tag_name: # Name of the tag to set
