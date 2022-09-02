@@ -1,0 +1,49 @@
+name: Test if tag exists
+
+on:
+  workflow_call:
+  inputs:
+    repo:     # Name of the repository to run on
+      required: true
+      type: string
+      default: 'Inform-DB'
+    tag_name: # Name of the tag to search for
+      required: false
+      type: string
+      default: 'requires_test'
+  secrets:
+    token:    # GitHub token with repo and workflow access
+      required: true
+
+jobs:
+  set_flag:
+    runs-on: ubuntu-latest
+    outputs:
+      tag_exists: ${{ steps.set_tag_flag.outputs.tag_exists }}
+    steps:
+      - id: set_tag_flag
+        name: Set tag_exists flag
+        run: |
+          exit_code=$(curl -X GET -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.token }}" https://api.github.com/repos/inform-health-informatics/${{ inputs.repo }}/git/matching-refs/tags/${{ inputs.tag_name }} | grep -q requires_test; echo $?)
+          if [ "$exit_code" == "0" ]; then
+              tag_exists=true
+              echo "${{ inputs.tag_name }} tag exists"
+          fi
+          echo "tag_exists=$tag_exists" >> $GITHUB_ENV
+
+  run_tests:
+      uses: inform-health-informatics/${{ inputs.repo }}/.github/workflows/test.yaml@develop
+      needs: set_flag
+      if: ${{ needs.set_flag.outputs.tag_exists }}
+
+  remove_tag:
+    runs-on: ubuntu-latest
+    needs: set-tag
+    if: always()  # Won't delete a non-existing tag
+    steps:
+      - name: Delete tag
+        run: |
+          curl -X DELETE \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.token }}" \
+          https://api.github.com/repos/inform-health-informatics/${{ inputs.repo }}/git/refs/tags/${{ inputs.tag_name }}
