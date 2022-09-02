@@ -1,2 +1,2 @@
 # emap-actions
-Reusable GitHub actions for EMAP
+Reusable GitHub actions for EMAP projects
