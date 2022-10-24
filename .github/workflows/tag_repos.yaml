@@ -26,7 +26,7 @@ jobs:
 
       - name: POST tag
         run: |
-          for repo in ${{ repos }}
+          for repo in ${{ inputs.repos }}
           do
             commit=$(
             curl -X GET -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.token }}" https://api.github.com/repos/inform-health-informatics/$repo/git/refs/heads/${{ inputs.branch }} | awk '/sha/ { gsub(/[",]/,""); print $2}'
