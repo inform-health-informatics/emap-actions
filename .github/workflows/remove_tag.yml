@@ -1,0 +1,26 @@
+name: Remove a tag
+
+on:
+  workflow_call:
+    inputs:
+      repo:     # Name of the repository to run on e.g. 'Inform-DB'
+        required: true
+        type: string
+      tag_name: # Name of the tag to search for
+        required: false
+        type: string
+        default: 'requires_test'
+    secrets:
+      token:    # GitHub token with repo and workflow access
+        required: true
+
+jobs:
+  remove_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete tag
+        run: |
+          curl -X DELETE \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.token }}" \
+           https://api.github.com/repos/inform-health-informatics/${{ inputs.repo }}/git/refs/tags/${{ inputs.tag_name }}

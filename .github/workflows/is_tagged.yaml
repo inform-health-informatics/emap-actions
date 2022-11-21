@@ -1,0 +1,33 @@
+name: Is a repo tagged?
+
+on:
+  workflow_call:
+    inputs:
+      repo:     # Name of the repository to run on e.g. 'Inform-DB'
+        required: true
+        type: string
+      tag_name: # Name of the tag to search for
+        required: false
+        type: string
+        default: 'requires_test'
+    secrets:
+      token:    # GitHub token with repo and workflow access
+        required: true
+    outputs:
+      tag_exists:
+        description: "If the tag in this repo exists"
+        value: ${{ jobs.set_tag.outputs.tag_exists }}
+
+jobs:
+  set_tag:
+    runs-on: ubuntu-latest
+    outputs:
+      tag_exists: ${{ steps.set_tag_exists.outputs.tag_exists }}
+    steps:
+      - id: set_tag_exists
+        run: |
+          exit_code=$(curl -X GET -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.token }}"  https://api.github.com/repos/inform-health-informatics/${{ inputs.repo }}/git/matching-refs/tags/${{ inputs.tag_name }} | grep -q ${{ inputs.tag_name }}; echo $?)
+          if [ "$exit_code" == "0" ]; then
+              echo "tag_exists=true" >> $GITHUB_OUTPUT
+              echo "tag exists!"
+          fi
